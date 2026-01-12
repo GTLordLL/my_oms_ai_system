@@ -1,6 +1,6 @@
 package com.erp.oms.advice;
 
-import com.erp.oms.dto.api.Result;
+import com.erp.oms.dto.api.ResultVO;
 import com.erp.oms.exception.BizException;
 import com.erp.oms.exception.StockException;
 import jakarta.validation.ConstraintViolationException;
@@ -13,42 +13,42 @@ public class GlobalExceptionHandler {
 
     // ========== 业务异常 ==========
     @ExceptionHandler(BizException.class)
-    public Result<Void> handleBizException(BizException ex) {
-        return Result.error(ex.getCode(), ex.getMessage());
+    public ResultVO<Void> handleBizException(BizException ex) {
+        return ResultVO.error(ex.getCode(), ex.getMessage());
     }
 
     @ExceptionHandler(StockException.class)
-    public Result<Void> handleStockException(StockException ex) {
-        return Result.error(409, ex.getMessage());
+    public ResultVO<Void> handleStockException(StockException ex) {
+        return ResultVO.error(409, ex.getMessage());
     }
 
     // ========== 参数校验异常 ==========
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Result<Void> handleValidException(MethodArgumentNotValidException ex) {
+    public ResultVO<Void> handleValidException(MethodArgumentNotValidException ex) {
         String msg = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(e -> e.getField() + "：" + e.getDefaultMessage())
                 .findFirst()
                 .orElse("参数错误");
-        return Result.error(400, msg);
+        return ResultVO.error(400, msg);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public Result<Void> handleConstraintViolation(ConstraintViolationException ex) {
-        return Result.error(400, ex.getMessage());
+    public ResultVO<Void> handleConstraintViolation(ConstraintViolationException ex) {
+        return ResultVO.error(400, ex.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public Result<Void> handleIllegalArgument(IllegalArgumentException ex) {
-        return Result.error(400, ex.getMessage());
+    public ResultVO<Void> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResultVO.error(400, ex.getMessage());
     }
 
     // ========== 兜底异常 ==========
     @ExceptionHandler(Exception.class)
-    public Result<Void> handleException(Exception ex) {
+    public ResultVO<Void> handleException(Exception ex) {
         ex.printStackTrace();
         // log.error("系统异常", ex);
-        return Result.error(500, "系统内部错误");
+        return ResultVO.error(500, ex.getMessage() + "系统内部错误");
     }
 }

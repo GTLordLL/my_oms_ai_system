@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+  erp-db:
+    image: mysql:8.0
+    container_name: erp-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "my$dianshang@260105"
+      MYSQL_DATABASE: erp_db
+    volumes:
+      # 1. 自动初始化：把本地 SQL 映射到容器初始化目录
+      - ./mysql/init:/docker-entrypoint-initdb.d
+      # 2. 数据持久化：把容器里的数据存到云服务器硬盘上
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    ports:
+      - "3306:3306"
+    command: --performance_schema=OFF    # 重要：关闭这个可以为 2G 内存机器省下约 200MB 内存
+
+  erp-back:
+    build: ./backend # 指向你Spring Boot代码的Dockerfile
+    container_name: erp-api
+    restart: always
+    depends_on:
+      - erp-db
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 800M  # 限制容器最大占用，给系统和数据库留出空间
+    environment:
+      # 变量名必须是 Spring 规范的大写+下划线格式，对应配置文件中的层级
+      - SPRING_DATASOURCE_URL=jdbc:mysql://erp-db:3306/erp_db?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=my$dianshang@260105
+
+  erp-front:
+    image: nginx:alpine
+    container_name: erp-web
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend/dist:/usr/share/nginx/html # 挂载打包后的Vue静态文件
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro # 挂载配置文件，ro表示只读
+    depends_on:
+      - erp-back # 确保后端先启动

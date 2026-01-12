@@ -1,16 +1,41 @@
 server:
-  port: 8080 # 项目启动端口
+  port: 8080
 
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    # 注意修改为你的数据库名、用户名和密码
-    url: jdbc:mysql://localhost:3306/erp_db?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
-    username: root
-    password: my$dianshang@260105
+    # 注意：url, username, password 必须左对齐
+    url: jdbc:postgresql://localhost:5432/erp_db?stringtype=unspecified
+    username: postgres
+    password: ${DB_PASSWORD:difyai123456}
+    driver-class-name: org.postgresql.Driver
 
-# MyBatis-Plus 配置，用于在控制台打印 SQL 语句，方便调试
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: ${REDIS_PASSWORD:difyai123456}
+
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
+
+# 自定义 Dify 配置
+dify:
+  workflow:
+    # 建议使用宿主机 IP 或未来容器间的服务名
+    url: http://172.17.0.1/v1/workflows/run
+    api-key:
+      generate-report: app-EDVBGllGZ9k9TVeSAXUzhaHO
+      simulate-customer: app-sRBCUZGG1b4JCVy8zvRbIwSF
+  agent:
+    url: http://172.17.0.1/v1/chat-messages
+    api-key: app-GPYrHOcgCJFGcKqG9I0p1jtG
+
+springdoc:
+  # 禁用 Swagger UI 界面 (index.html)
+  swagger-ui:
+    enabled: true
+  # 禁用 JSON 格式的文档接口 (v3/api-docs)
+  api-docs:
+    enabled: true

@@ -1,0 +1,80 @@
+1. 核心指标卡片 (Real-time Metrics)
+
+这些数据通常放在仪表盘最上方，让管理者一眼看到今天的“战果”。
+
+    今日销售额：统计 oms_order 中 create_time 为今天的 pay_amount 总和。
+
+    今日订单量：统计 oms_order 中 create_time 为今天的记录数。
+
+    待发货订单：统计 oms_order 中 status = 1 (待发货) 的数量，这是仓库的工作量。
+
+    库存预警数：统计 oms_sku 中 stock_quantity <= alert_quantity 的 SKU 数量。
+
+2. 销售趋势与构成分析 (Sales Analysis)
+
+通过图表展示业务的增长和来源分布。
+
+    近七日销售趋势图（折线图）：
+
+        维度：日期。
+
+        指标：销售额、订单量。
+
+        数据源：oms_order。
+
+    平台销售占比（饼图）：
+
+        维度：source_platform (淘宝、京东、拼多多)。
+
+        意义：分析哪个平台是目前的流量主力。
+
+    热销商品排行 (Top 10)：
+
+        逻辑：关联 oms_order_item 和 oms_product，按 quantity 之和排序。
+
+3. 库存与供应链分析 (Stock & Supply Chain)
+
+这是 OMS 系统最核心的“压舱石”数据。
+
+    库存周转分析（漏斗图/柱状图）：
+
+        高周转 SKU：通过 oms_stock_log 统计近 30 天 type = 2 (销售出库) 频率最高的商品。
+
+        积压库存：统计 stock_quantity 很高但近 30 天无销售记录的 SKU。
+
+    库存变动构成（堆叠柱状图）：
+
+        维度：oms_stock_log.type。
+
+        指标：change_count。
+
+        意义：观察入库（采购、退货）与出库（销售）的比例关系。
+
+4. 财务利润分析 (Financial & Profit)
+
+因为你在 oms_order_item 中存储了 unit_cost (成本快照)，你可以计算出极其精准的毛利。
+
+    今日/本月毛利额：
+
+        计算公式：SUM((unit_price - unit_cost) * quantity) - SUM(post_fee)。
+
+        意义：销售额是虚的，扣除成本和运费后的毛利才是实打实的利润。
+
+    单均利润分析：
+
+        逻辑：总利润 / 总订单量，监控每单赚多少钱，预警亏本单。
+
+5. 运营时效监控 (Operational Efficiency)
+
+针对手动进销存转自动化的关键考核。
+
+    平均发货时长：
+
+        计算：AVG(deliver_time - create_time) 针对已发货订单。
+
+        意义：监控仓库打单发货的速度，时效越快，平台权重越高。
+
+    退货率监控：
+
+        逻辑：统计 oms_stock_log 中 type = 3 (退货入库) 的数量占总销售订单的比例。
+

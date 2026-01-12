@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    # 1. 修改为 PostgreSQL 的驱动类
+    driver-class-name: org.postgresql.Driver
+    # 2. 修改 URL 格式（注意端口 5432 和参数）
+    # 建议新建一个名为 oms_test 的库。stringtype=unspecified 增加对兼容性的支持
+    url: jdbc:postgresql://localhost:5432/oms_test?stringtype=unspecified&currentSchema=public
+    username: postgres
+    # 建议使用环境变量，如果本地测试直接写死也可以
+    password: ${DB_PASSWORD:difyai123456}
+
+    hikari:
+      # 保持你的高性能配置
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      auto-commit: true
+      # PostgreSQL 建议显式指定这个，防止某些驱动版本下的心跳问题
+      keepalive-time: 30000
+
+  sql:
+    init:
+      # 第一次运行初始化表结构
+      mode: always
+      # 确保你的 schema.sql 里的语法已经从 MySQL 转换为 PostgreSQL
+      # (例如: 移除 ENGINE=InnoDB, 将 UNSIGNED 修改为对应的约束)
+      schema-locations: classpath:schema.sql
+      # 关键配置：指定一个新的分隔符，防止函数内部的分号被误拆
+      separator: ";;"
+
+# 继承主配置中的 MyBatis-Plus 逻辑
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
