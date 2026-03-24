@@ -15,8 +15,8 @@ public class JwtUtils {
     private static final String SECRET = "your_super_secret_key_make_it_very_long_for_security_2026";
     private static final Key KEY = Keys.hmacShaKeyFor(SECRET.getBytes());
 
-    // 过期时间：24小时
-    private static final long EXPIRE = 24 * 60 * 60 * 1000;
+    // 将过期时间设置为当前时间 + 100年（以毫秒计算）
+    private static final long EXPIRE = System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000);
 
     /**
      * 生成 Token

@@ -29,7 +29,7 @@ public class DifyAgentServiceImpl implements DifyAgentService {
     @Value("${dify.agent.url}")
     private String agentUrl;
 
-    @Value("${dify.agent.api-key}")
+    @Value("${dify.agent.cloud.api-key}")
     private String apiKey;
 
     private final WebClient webClient;
