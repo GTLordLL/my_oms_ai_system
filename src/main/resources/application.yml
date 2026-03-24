@@ -26,13 +26,13 @@ dify:
     # 建议使用宿主机 IP 或未来容器间的服务名
     url: http://172.17.0.1/v1/workflows/run
     api-key:
-      generate-report: app-EDVBGllGZ9k9TVeSAXUzhaHO
-      simulate-customer: app-sRBCUZGG1b4JCVy8zvRbIwSF
+      generate-report: 
+      simulate-customer: 
   agent:
     url: http://172.17.0.1/v1/chat-messages
     api-key:
-      local: app-agQynfuXu4ZOb2Qr9GXaqOTb
-      cloud: app-GPYrHOcgCJFGcKqG9I0p1jtG
+      local: 
+      cloud: 
 
 springdoc:
   # 禁用 Swagger UI 界面 (index.html)
